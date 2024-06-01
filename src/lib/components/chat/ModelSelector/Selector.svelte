@@ -1,15 +1,11 @@
 <script lang="ts">
 	import { DropdownMenu } from 'bits-ui';
-
 	import { flyAndScale } from '$lib/utils/transitions';
-	import { createEventDispatcher, onMount, getContext, tick } from 'svelte';
-
+	import { createEventDispatcher, onMount, getContext } from 'svelte';
 	import ChevronDown from '$lib/components/icons/ChevronDown.svelte';
 	import Check from '$lib/components/icons/Check.svelte';
 	import Search from '$lib/components/icons/Search.svelte';
-
 	import { cancelOllamaRequest, deleteModel, getOllamaVersion, pullModel } from '$lib/apis/ollama';
-
 	import { user, MODEL_DOWNLOAD_POOL, models, mobile } from '$lib/stores';
 	import { toast } from 'svelte-sonner';
 	import { capitalizeFirstLetter, getModels, splitStream } from '$lib/utils';
@@ -22,13 +18,10 @@
 	export let placeholder = 'Select a model';
 	export let searchEnabled = true;
 	export let searchPlaceholder = $i18n.t('Search a model');
-
 	export let items = [{ value: 'mango', label: 'Mango' }];
-
 	export let className = 'w-[30rem]';
 
 	let show = false;
-
 	let selectedModel = '';
 	$: selectedModel = items.find((item) => item.value === value) ?? '';
 
@@ -41,13 +34,9 @@
 
 	const pullModelHandler = async () => {
 		const sanitizedModelTag = searchValue.trim().replace(/^ollama\s+(run|pull)\s+/, '');
-
-		console.log($MODEL_DOWNLOAD_POOL);
 		if ($MODEL_DOWNLOAD_POOL[sanitizedModelTag]) {
 			toast.error(
-				$i18n.t(`Model '{{modelTag}}' is already in queue for downloading.`, {
-					modelTag: sanitizedModelTag
-				})
+				$i18n.t(`Model '{{modelTag}}' is already in queue for downloading.`, { modelTag: sanitizedModelTag })
 			);
 			return;
 		}
@@ -79,13 +68,8 @@
 					for (const line of lines) {
 						if (line !== '') {
 							let data = JSON.parse(line);
-							console.log(data);
-							if (data.error) {
-								throw data.error;
-							}
-							if (data.detail) {
-								throw data.detail;
-							}
+							if (data.error) throw data.error;
+							if (data.detail) throw data.detail;
 
 							if (data.id) {
 								MODEL_DOWNLOAD_POOL.set({
@@ -97,7 +81,6 @@
 										done: false
 									}
 								});
-								console.log(data);
 							}
 
 							if (data.status) {
@@ -119,7 +102,6 @@
 									});
 								} else {
 									toast.success(data.status);
-
 									MODEL_DOWNLOAD_POOL.set({
 										...$MODEL_DOWNLOAD_POOL,
 										[sanitizedModelTag]: {
@@ -132,21 +114,17 @@
 						}
 					}
 				} catch (error) {
-					console.log(error);
 					if (typeof error !== 'string') {
 						error = error.message;
 					}
 
 					toast.error(error);
-					// opts.callback({ success: false, error, modelName: opts.modelName });
 				}
 			}
 
 			if ($MODEL_DOWNLOAD_POOL[sanitizedModelTag].done) {
 				toast.success(
-					$i18n.t(`Model '{{modelName}}' has been successfully downloaded.`, {
-						modelName: sanitizedModelTag
-					})
+					$i18n.t(`Model '{{modelName}}' has been successfully downloaded.`, { modelName: sanitizedModelTag })
 				);
 
 				models.set(await getModels(localStorage.token));
@@ -155,10 +133,7 @@
 			}
 
 			delete $MODEL_DOWNLOAD_POOL[sanitizedModelTag];
-
-			MODEL_DOWNLOAD_POOL.set({
-				...$MODEL_DOWNLOAD_POOL
-			});
+			MODEL_DOWNLOAD_POOL.set({ ...$MODEL_DOWNLOAD_POOL });
 		}
 	};
 
@@ -170,12 +145,9 @@
 		const { reader, requestId } = $MODEL_DOWNLOAD_POOL[model];
 		if (reader) {
 			await reader.cancel();
-
 			await cancelOllamaRequest(localStorage.token, requestId);
 			delete $MODEL_DOWNLOAD_POOL[model];
-			MODEL_DOWNLOAD_POOL.set({
-				...$MODEL_DOWNLOAD_POOL
-			});
+			MODEL_DOWNLOAD_POOL.set({ ...$MODEL_DOWNLOAD_POOL });
 			await deleteModel(localStorage.token, model);
 			toast.success(`${model} download has been canceled`);
 		}
@@ -198,14 +170,14 @@
 			{:else}
 				{placeholder}
 			{/if}
-			<ChevronDown className=" self-center ml-2 size-3" strokeWidth="2.5" />
+			<ChevronDown class="self-center ml-2 size-3" strokeWidth="2.5" />
 		</div>
 	</DropdownMenu.Trigger>
 
 	<DropdownMenu.Content
-		class=" z-40 {$mobile
+		class="z-40 {$mobile
 			? `w-full`
-			: `${className}`} max-w-[calc(100vw-1rem)] justify-start rounded-xl  bg-white dark:bg-gray-850 dark:text-white shadow-lg border border-gray-300/30 dark:border-gray-700/50  outline-none "
+			: `${className}`} max-w-[calc(100vw-1rem)] justify-start rounded-xl bg-white dark:bg-gray-850 dark:text-white shadow-lg border border-gray-300/30 dark:border-gray-700/50 outline-none"
 		transition={flyAndScale}
 		side={$mobile ? 'bottom' : 'bottom-start'}
 		sideOffset={4}
@@ -213,14 +185,14 @@
 		<slot>
 			{#if searchEnabled}
 				<div class="flex items-center gap-2.5 px-5 mt-3.5 mb-3">
-					<Search className="size-4" strokeWidth="2.5" />
-
+					<Search class="size-4" strokeWidth="2.5" />
 					<input
 						id="model-search-input"
 						bind:value={searchValue}
 						class="w-full text-sm bg-transparent outline-none"
 						placeholder={searchPlaceholder}
 						autocomplete="off"
+						aria-label="Search models"
 					/>
 				</div>
 
@@ -230,33 +202,30 @@
 			<div class="px-3 my-2 max-h-64 overflow-y-auto scrollbar-hidden">
 				{#each filteredItems as item}
 					<button
-						aria-label="model-item"
+						aria-label={`Select ${item.label}`}
 						class="flex w-full text-left font-medium line-clamp-1 select-none items-center rounded-button py-2 pl-3 pr-1.5 text-sm text-gray-700 dark:text-gray-100 outline-none transition-all duration-75 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer data-[highlighted]:bg-muted"
 						on:click={() => {
 							value = item.value;
-
 							show = false;
 						}}
 					>
 						<div class="flex items-center gap-2">
 							<div class="line-clamp-1">
 								{item.label}
-
-								<span class=" text-xs font-medium text-gray-600 dark:text-gray-400"
-									>{item.info?.details?.parameter_size ?? ''}</span
-								>
+								<span class="text-xs font-medium text-gray-600 dark:text-gray-400">
+									{item.info?.details?.parameter_size ?? ''}
+								</span>
 							</div>
-
-							<!-- {JSON.stringify(item.info)} -->
 
 							{#if item.info.external}
 								<Tooltip content={item.info?.source ?? 'External'}>
-									<div class=" mr-2">
+									<div class="mr-2">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											viewBox="0 0 16 16"
 											fill="currentColor"
 											class="size-3"
+											aria-hidden="true"
 										>
 											<path
 												fill-rule="evenodd"
@@ -279,7 +248,7 @@
 											: ''
 									}${item.info.size ? `(${(item.info.size / 1024 ** 3).toFixed(1)}GB)` : ''}`}
 								>
-									<div class=" mr-2">
+									<div class="mr-2">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											fill="none"
@@ -287,6 +256,7 @@
 											stroke-width="1.5"
 											stroke="currentColor"
 											class="w-4 h-4"
+											aria-hidden="true"
 										>
 											<path
 												stroke-linecap="round"
@@ -301,7 +271,7 @@
 
 						{#if value === item.value}
 							<div class="ml-auto">
-								<Check />
+								<Check aria-hidden="true" />
 							</div>
 						{/if}
 					</button>
@@ -319,6 +289,7 @@
 						on:click={() => {
 							pullModelHandler();
 						}}
+						aria-label={`Pull ${searchValue} from Ollama.com`}
 					>
 						{$i18n.t(`Pull "{{searchValue}}" from Ollama.com`, { searchValue: searchValue })}
 					</button>
@@ -335,7 +306,8 @@
 									viewBox="0 0 24 24"
 									fill="currentColor"
 									xmlns="http://www.w3.org/2000/svg"
-									><style>
+									aria-hidden="true"
+								><style>
 										.spinner_ajPY {
 											transform-origin: center;
 											animation: spinner_AtaB 0.75s infinite linear;
@@ -351,8 +323,7 @@
 									/><path
 										d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"
 										class="spinner_ajPY"
-									/></svg
-								>
+									/></svg>
 							</div>
 
 							<div class="flex flex-col self-start">
@@ -377,6 +348,7 @@
 									on:click={() => {
 										cancelModelPullHandler(model);
 									}}
+									aria-label={`Cancel download of ${model}`}
 								>
 									<svg
 										class="w-4 h-4 text-gray-800 dark:text-white"
