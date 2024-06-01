@@ -333,13 +333,16 @@
 
 {#key message.id}
 	<div
-		class=" flex w-full message-{message.id}"
+		class="flex w-full message-{message.id}"
 		id="message-{message.id}"
 		dir={$settings.chatDirection}
+		aria-live="polite"
+		aria-atomic="true"
 	>
 		<ProfileImage
 			src={modelfiles[message.model]?.imageUrl ??
 				($i18n.language === 'dg-DG' ? `/doge.png` : `${WEBUI_BASE_URL}/static/favicon.png`)}
+			alt="User profile image"
 		/>
 
 		<div class="w-full overflow-hidden pl-1">
@@ -352,7 +355,7 @@
 
 				{#if message.timestamp}
 					<span
-						class=" self-center invisible group-hover:visible text-gray-400 text-xs font-medium uppercase"
+						class="self-center invisible group-hover:visible text-gray-400 text-xs font-medium uppercase"
 					>
 						{dayjs(message.timestamp * 1000).format($i18n.t('h:mm a'))}
 					</span>
@@ -364,7 +367,7 @@
 					{#each message.files as file}
 						<div>
 							{#if file.type === 'image'}
-								<Image src={file.url} />
+								<Image src={file.url} alt="Attached image" />
 							{/if}
 						</div>
 					{/each}
@@ -373,6 +376,8 @@
 
 			<div
 				class="prose chat-{message.role} w-full max-w-full dark:prose-invert prose-headings:my-0 prose-p:m-0 prose-p:-mb-6 prose-pre:my-0 prose-table:my-0 prose-blockquote:my-0 prose-img:my-0 prose-ul:-my-4 prose-ol:-my-4 prose-li:-my-3 prose-ul:-mb-6 prose-ol:-mb-8 prose-ol:p-0 prose-li:-mb-4 whitespace-pre-line"
+				role="region"
+				aria-label="Message content"
 			>
 				<div>
 					{#if edit === true}
@@ -380,21 +385,35 @@
 							<textarea
 								id="message-edit-{message.id}"
 								bind:this={editTextAreaElement}
-								class=" bg-transparent outline-none w-full resize-none"
+								class="bg-transparent outline-none w-full resize-none"
 								bind:value={editedContent}
 								on:input={(e) => {
 									e.target.style.height = '';
 									e.target.style.height = `${e.target.scrollHeight}px`;
 								}}
+								on:keydown={(e) => {
+									if (e.key === 'Escape') {
+										document.getElementById('close-edit-message-button')?.click();
+									}
+
+									const isCmdOrCtrlPressed = e.metaKey || e.ctrlKey;
+									const isEnterPressed = e.key === 'Enter';
+
+									if (isCmdOrCtrlPressed && isEnterPressed) {
+										document.getElementById('save-edit-message-button')?.click();
+									}
+								}}
+								aria-label="Edit message"
 							/>
 
-							<div class=" mt-2 mb-1 flex justify-end space-x-1.5 text-sm font-medium">
+							<div class="mt-2 mb-1 flex justify-end space-x-1.5 text-sm font-medium">
 								<button
 									id="close-edit-message-button"
-									class=" px-4 py-2 bg-gray-900 hover:bg-gray-850 text-gray-100 transition rounded-3xl"
+									class="px-4 py-2 bg-gray-900 hover:bg-gray-850 text-gray-100 transition rounded-3xl"
 									on:click={() => {
 										cancelEditMessage();
 									}}
+									aria-label="Cancel edit"
 								>
 									{$i18n.t('Cancel')}
 								</button>
@@ -405,6 +424,7 @@
 									on:click={() => {
 										editMessageConfirmHandler();
 									}}
+									aria-label="Save edit"
 								>
 									{$i18n.t('Save')}
 								</button>
@@ -431,7 +451,7 @@
 										/>
 									</svg>
 
-									<div class=" self-center">
+									<div class="self-center">
 										{message.content}
 									</div>
 								</div>
@@ -444,6 +464,7 @@
 											id={`${message.id}-${tokenIdx}`}
 											lang={token.lang}
 											code={revertSanitizedResponseContent(token.text)}
+											aria-label={`Code block language: ${token.lang}`}
 										/>
 									{:else}
 										{@html marked.parse(token.raw, {
@@ -481,6 +502,7 @@
 													showCitationModal = true;
 													selectedCitation = citation;
 												}}
+												aria-label={`Citation ${idx + 1}: ${citation.source.name}`}
 											>
 												<div class="bg-white dark:bg-gray-700 rounded-full size-4">
 													{idx + 1}
@@ -496,7 +518,7 @@
 
 							{#if message.done || siblings.length > 1}
 								<div
-									class=" flex justify-start overflow-x-auto buttons text-gray-600 dark:text-gray-500"
+									class="flex justify-start overflow-x-auto buttons text-gray-600 dark:text-gray-500"
 								>
 									{#if siblings.length > 1}
 										<div class="flex self-center min-w-fit" dir="ltr">
@@ -505,6 +527,7 @@
 												on:click={() => {
 													showPreviousMessage(message);
 												}}
+												aria-label="Show previous message"
 											>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
@@ -533,6 +556,7 @@
 												on:click={() => {
 													showNextMessage(message);
 												}}
+												aria-label="Show next message"
 											>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
@@ -562,6 +586,7 @@
 													on:click={() => {
 														editMessageHandler();
 													}}
+													aria-label="Edit message"
 												>
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
@@ -585,10 +610,11 @@
 											<button
 												class="{isLastMessage
 													? 'visible'
-													: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition copy-response-button"
+													: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition"
 												on:click={() => {
 													copyToClipboard(message.content);
 												}}
+												aria-label="Copy message"
 											>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
@@ -618,10 +644,11 @@
 														toggleSpeakMessage(message);
 													}
 												}}
+												aria-label="Read aloud"
 											>
 												{#if loadingSpeech}
 													<svg
-														class=" w-4 h-4"
+														class="w-4 h-4"
 														fill="currentColor"
 														viewBox="0 0 24 24"
 														xmlns="http://www.w3.org/2000/svg"
@@ -699,10 +726,11 @@
 															generateImage(message);
 														}
 													}}
+													aria-label="Generate image"
 												>
 													{#if generatingImage}
 														<svg
-															class=" w-4 h-4"
+															class="w-4 h-4"
 															fill="currentColor"
 															viewBox="0 0 24 24"
 															xmlns="http://www.w3.org/2000/svg"
@@ -765,6 +793,7 @@
 														console.log(message);
 													}}
 													id="info-{message.id}"
+													aria-label="Generation info"
 												>
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
@@ -803,6 +832,7 @@
 																?.scrollIntoView();
 														}, 0);
 													}}
+													aria-label="Good response"
 												>
 													<svg
 														stroke="currentColor"
@@ -837,6 +867,7 @@
 																?.scrollIntoView();
 														}, 0);
 													}}
+													aria-label="Bad response"
 												>
 													<svg
 														stroke="currentColor"
@@ -865,6 +896,7 @@
 													on:click={() => {
 														continueGeneration();
 													}}
+													aria-label="Continue response"
 												>
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
@@ -897,6 +929,7 @@
 													on:click={() => {
 														regenerateResponse(message);
 													}}
+													aria-label="Regenerate response"
 												>
 													<svg
 														xmlns="http://www.w3.org/2000/svg"

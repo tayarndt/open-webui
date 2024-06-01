@@ -56,13 +56,14 @@
 	};
 </script>
 
-<div class=" flex w-full user-message" dir={$settings.chatDirection}>
+<div class="flex w-full user-message" dir={$settings.chatDirection} aria-live="polite" aria-atomic="true">
 	{#if !($settings?.chatBubble ?? true)}
 		<ProfileImage
 			src={message.user
 				? $modelfiles.find((modelfile) => modelfile.tagName === message.user)?.imageUrl ??
 				  '/user.png'
 				: user?.profile_image_url ?? '/user.png'}
+			alt="User profile image"
 		/>
 	{/if}
 	<div class="w-full overflow-hidden pl-1">
@@ -74,7 +75,7 @@
 							{$modelfiles.find((modelfile) => modelfile.tagName === message.user)?.title}
 						{:else}
 							{$i18n.t('You')}
-							<span class=" text-gray-500 text-sm font-medium">{message?.user ?? ''}</span>
+							<span class="text-gray-500 text-sm font-medium">{message?.user ?? ''}</span>
 						{/if}
 					{:else if $settings.showUsername || $_user.name !== user.name}
 						{user.name}
@@ -84,7 +85,7 @@
 
 					{#if message.timestamp}
 						<span
-							class=" invisible group-hover:visible text-gray-400 text-xs font-medium uppercase"
+							class="invisible group-hover:visible text-gray-400 text-xs font-medium uppercase"
 						>
 							{dayjs(message.timestamp * 1000).format($i18n.t('h:mm a'))}
 						</span>
@@ -95,13 +96,15 @@
 
 		<div
 			class="prose chat-{message.role} w-full max-w-full flex flex-col justify-end dark:prose-invert prose-headings:my-0 prose-p:my-0 prose-p:-mb-4 prose-pre:my-0 prose-table:my-0 prose-blockquote:my-0 prose-img:my-0 prose-ul:-my-4 prose-ol:-my-4 prose-li:-my-3 prose-ul:-mb-6 prose-ol:-mb-6 prose-li:-mb-4 whitespace-pre-line"
+			role="region"
+			aria-label="Message content"
 		>
 			{#if message.files}
-				<div class="mt-2.5 mb-1 w-full flex flex-col justify-end overflow-x-auto gap-1 flex-wrap">
+				<div class="mt-2.5 mb-1 w-full flex flex-col justify-end overflow-x-auto gap-1 flex-wrap" role="list">
 					{#each message.files as file}
-						<div class={$settings?.chatBubble ?? true ? 'self-end' : ''}>
+						<div class={$settings?.chatBubble ?? true ? 'self-end' : ''} role="listitem">
 							{#if file.type === 'image'}
-								<img src={file.url} alt="input" class=" max-h-96 rounded-lg" draggable="false" />
+								<img src={file.url} alt="Attached image" class="max-h-96 rounded-lg" draggable="false" />
 							{:else if file.type === 'doc'}
 								<button
 									class="h-16 w-72 flex items-center space-x-3 px-2.5 dark:bg-gray-850 rounded-xl border border-gray-200 dark:border-none text-left"
@@ -111,6 +114,7 @@
 											window.open(file?.url, '_blank').focus();
 										}
 									}}
+									aria-label="Open document"
 								>
 									<div class="p-2.5 bg-red-400 text-white rounded-lg">
 										<svg
@@ -131,17 +135,18 @@
 									</div>
 
 									<div class="flex flex-col justify-center -space-y-0.5">
-										<div class=" dark:text-gray-100 text-sm font-medium line-clamp-1">
+										<div class="dark:text-gray-100 text-sm font-medium line-clamp-1">
 											{file.name}
 										</div>
 
-										<div class=" text-gray-500 text-sm">{$i18n.t('Document')}</div>
+										<div class="text-gray-500 text-sm">{$i18n.t('Document')}</div>
 									</div>
 								</button>
 							{:else if file.type === 'collection'}
 								<button
 									class="h-16 w-72 flex items-center space-x-3 px-2.5 dark:bg-gray-600 rounded-xl border border-gray-200 dark:border-none text-left"
 									type="button"
+									aria-label="Open collection"
 								>
 									<div class="p-2.5 bg-red-400 text-white rounded-lg">
 										<svg
@@ -160,11 +165,11 @@
 									</div>
 
 									<div class="flex flex-col justify-center -space-y-0.5">
-										<div class=" dark:text-gray-100 text-sm font-medium line-clamp-1">
+										<div class="dark:text-gray-100 text-sm font-medium line-clamp-1">
 											{file?.title ?? `#${file.name}`}
 										</div>
 
-										<div class=" text-gray-500 text-sm">{$i18n.t('Collection')}</div>
+										<div class="text-gray-500 text-sm">{$i18n.t('Collection')}</div>
 									</div>
 								</button>
 							{/if}
@@ -174,11 +179,11 @@
 			{/if}
 
 			{#if edit === true}
-				<div class=" w-full bg-gray-50 dark:bg-gray-800 rounded-3xl px-5 py-3 mb-2">
+				<div class="w-full bg-gray-50 dark:bg-gray-800 rounded-3xl px-5 py-3 mb-2">
 					<textarea
 						id="message-edit-{message.id}"
 						bind:this={messageEditTextAreaElement}
-						class=" bg-transparent outline-none w-full resize-none"
+						class="bg-transparent outline-none w-full resize-none"
 						bind:value={editedContent}
 						on:input={(e) => {
 							e.target.style.height = '';
@@ -196,15 +201,17 @@
 								document.getElementById('save-edit-message-button')?.click();
 							}
 						}}
+						aria-label="Edit message"
 					/>
 
-					<div class=" mt-2 mb-1 flex justify-end space-x-1.5 text-sm font-medium">
+					<div class="mt-2 mb-1 flex justify-end space-x-1.5 text-sm font-medium">
 						<button
 							id="close-edit-message-button"
-							class=" px-4 py-2 bg-gray-900 hover:bg-gray-850 text-gray-100 transition rounded-3xl"
+							class="px-4 py-2 bg-gray-900 hover:bg-gray-850 text-gray-100 transition rounded-3xl"
 							on:click={() => {
 								cancelEditMessage();
 							}}
+							aria-label="Cancel edit"
 						>
 							{$i18n.t('Cancel')}
 						</button>
@@ -215,6 +222,7 @@
 							on:click={() => {
 								editMessageConfirmHandler();
 							}}
+							aria-label="Save edit"
 						>
 							{$i18n.t('Send')}
 						</button>
@@ -230,12 +238,12 @@
 								  }`
 								: ''}  "
 						>
-							<pre id="user-message">{message.content}</pre>
+							<pre id="user-message" aria-label="User message">{message.content}</pre>
 						</div>
 					</div>
 
 					<div
-						class=" flex {$settings?.chatBubble ?? true
+						class="flex {$settings?.chatBubble ?? true
 							? 'justify-end'
 							: ''}  text-gray-600 dark:text-gray-500"
 					>
@@ -247,6 +255,7 @@
 										on:click={() => {
 											showPreviousMessage(message);
 										}}
+										aria-label="Show previous message"
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -273,6 +282,7 @@
 										on:click={() => {
 											showNextMessage(message);
 										}}
+										aria-label="Show next message"
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -299,6 +309,7 @@
 									on:click={() => {
 										editMessageHandler();
 									}}
+									aria-label="Edit message"
 								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -324,6 +335,7 @@
 								on:click={() => {
 									copyToClipboard(message.content);
 								}}
+								aria-label="Copy message"
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -337,7 +349,7 @@
 										stroke-linecap="round"
 										stroke-linejoin="round"
 										d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"
-									/>
+										/>
 								</svg>
 							</button>
 						</Tooltip>
@@ -349,6 +361,7 @@
 									on:click={() => {
 										deleteMessageHandler();
 									}}
+									aria-label="Delete message"
 								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -376,6 +389,7 @@
 										on:click={() => {
 											showPreviousMessage(message);
 										}}
+										aria-label="Show previous message"
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -402,6 +416,7 @@
 										on:click={() => {
 											showNextMessage(message);
 										}}
+										aria-label="Show next message"
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
