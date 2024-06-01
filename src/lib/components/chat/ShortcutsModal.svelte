@@ -7,15 +7,16 @@
 	export let show = false;
 </script>
 
-<Modal bind:show>
+<Modal bind:show aria-labelledby="modal-title" aria-describedby="modal-description">
 	<div class="text-gray-700 dark:text-gray-100">
-		<div class=" flex justify-between dark:text-gray-300 px-5 pt-4">
-			<div class=" text-lg font-medium self-center">{$i18n.t('Keyboard shortcuts')}</div>
+		<div class="flex justify-between dark:text-gray-300 px-5 pt-4">
+			<h2 id="modal-title" class="text-lg font-medium self-center">{$i18n.t('Keyboard shortcuts')}</h2>
 			<button
 				class="self-center"
 				on:click={() => {
 					show = false;
 				}}
+				aria-label="Close"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -30,27 +31,24 @@
 			</button>
 		</div>
 
-		<div class="flex flex-col md:flex-row w-full p-5 md:space-x-4 dark:text-gray-200">
-			<div class=" flex flex-col w-full sm:flex-row sm:justify-center sm:space-x-6">
+		<div class="flex flex-col md:flex-row w-full p-5 md:space-x-4 dark:text-gray-200" id="modal-description">
+			<div class="flex flex-col w-full sm:flex-row sm:justify-center sm:space-x-6">
 				<div class="flex flex-col space-y-3 w-full self-start">
 					<div class="w-full flex justify-between items-center">
-						<div class=" text-sm">{$i18n.t('Open new chat')}</div>
-
+						<div class="text-sm">{$i18n.t('Open new chat')}</div>
 						<div class="flex space-x-1 text-xs">
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Ctrl/⌘
 							</div>
-
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Shift
 							</div>
-
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								O
 							</div>
@@ -58,17 +56,15 @@
 					</div>
 
 					<div class="w-full flex justify-between items-center">
-						<div class=" text-sm">{$i18n.t('Focus chat input')}</div>
-
+						<div class="text-sm">{$i18n.t('Focus chat input')}</div>
 						<div class="flex space-x-1 text-xs">
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Shift
 							</div>
-
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Esc
 							</div>
@@ -76,23 +72,20 @@
 					</div>
 
 					<div class="w-full flex justify-between items-center">
-						<div class=" text-sm">{$i18n.t('Copy last code block')}</div>
-
+						<div class="text-sm">{$i18n.t('Copy last code block')}</div>
 						<div class="flex space-x-1 text-xs">
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Ctrl/⌘
 							</div>
-
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Shift
 							</div>
-
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								;
 							</div>
@@ -100,23 +93,20 @@
 					</div>
 
 					<div class="w-full flex justify-between items-center">
-						<div class=" text-sm">{$i18n.t('Copy last response')}</div>
-
+						<div class="text-sm">{$i18n.t('Copy last response')}</div>
 						<div class="flex space-x-1 text-xs">
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Ctrl/⌘
 							</div>
-
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Shift
 							</div>
-
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								C
 							</div>
@@ -126,16 +116,15 @@
 
 				<div class="flex flex-col space-y-3 w-full self-start">
 					<div class="w-full flex justify-between items-center">
-						<div class=" text-sm">{$i18n.t('Toggle settings')}</div>
-
+						<div class="text-sm">{$i18n.t('Toggle settings')}</div>
 						<div class="flex space-x-1 text-xs">
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Ctrl/⌘
 							</div>
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								.
 							</div>
@@ -143,23 +132,20 @@
 					</div>
 
 					<div class="w-full flex justify-between items-center">
-						<div class=" text-sm">{$i18n.t('Toggle sidebar')}</div>
-
+						<div class="text-sm">{$i18n.t('Toggle sidebar')}</div>
 						<div class="flex space-x-1 text-xs">
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Ctrl/⌘
 							</div>
-
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Shift
 							</div>
-
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								S
 							</div>
@@ -167,22 +153,20 @@
 					</div>
 
 					<div class="w-full flex justify-between items-center">
-						<div class=" text-sm">{$i18n.t('Delete chat')}</div>
-
+						<div class="text-sm">{$i18n.t('Delete chat')}</div>
 						<div class="flex space-x-1 text-xs">
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Ctrl/⌘
 							</div>
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Shift
 							</div>
-
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								⌫
 							</div>
@@ -190,17 +174,15 @@
 					</div>
 
 					<div class="w-full flex justify-between items-center">
-						<div class=" text-sm">{$i18n.t('Show shortcuts')}</div>
-
+						<div class="text-sm">{$i18n.t('Show shortcuts')}</div>
 						<div class="flex space-x-1 text-xs">
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								Ctrl/⌘
 							</div>
-
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								/
 							</div>
@@ -210,21 +192,18 @@
 			</div>
 		</div>
 
-		<div class=" flex justify-between dark:text-gray-300 px-5">
-			<div class=" text-lg font-medium self-center">{$i18n.t('Input commands')}</div>
+		<div class="flex justify-between dark:text-gray-300 px-5">
+			<h2 class="text-lg font-medium self-center">{$i18n.t('Input commands')}</h2>
 		</div>
 
 		<div class="flex flex-col md:flex-row w-full p-5 md:space-x-4 dark:text-gray-200">
-			<div class=" flex flex-col w-full sm:flex-row sm:justify-center sm:space-x-6">
+			<div class="flex flex-col w-full sm:flex-row sm:justify-center sm:space-x-6">
 				<div class="flex flex-col space-y-3 w-full self-start">
 					<div class="w-full flex justify-between items-center">
-						<div class=" text-sm">
-							{$i18n.t('Attach file')}
-						</div>
-
+						<div class="text-sm">{$i18n.t('Attach file')}</div>
 						<div class="flex space-x-1 text-xs">
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								#
 							</div>
@@ -232,13 +211,10 @@
 					</div>
 
 					<div class="w-full flex justify-between items-center">
-						<div class=" text-sm">
-							{$i18n.t('Add custom prompt')}
-						</div>
-
+						<div class="text-sm">{$i18n.t('Add custom prompt')}</div>
 						<div class="flex space-x-1 text-xs">
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								/
 							</div>
@@ -246,13 +222,10 @@
 					</div>
 
 					<div class="w-full flex justify-between items-center">
-						<div class=" text-sm">
-							{$i18n.t('Select model')}
-						</div>
-
+						<div class="text-sm">{$i18n.t('Select model')}</div>
 						<div class="flex space-x-1 text-xs">
 							<div
-								class=" h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+								class="h-fit py-1 px-2 flex items-center justify-center rounded border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
 							>
 								@
 							</div>

@@ -1,12 +1,9 @@
 <script lang="ts">
 	import { onMount, getContext } from 'svelte';
 	import { Confetti } from 'svelte-confetti';
-
 	import { WEBUI_NAME, config } from '$lib/stores';
-
 	import { WEBUI_VERSION } from '$lib/constants';
 	import { getChangelog } from '$lib/apis';
-
 	import Modal from './common/Modal.svelte';
 
 	const i18n = getContext('i18n');
@@ -21,20 +18,21 @@
 	});
 </script>
 
-<Modal bind:show>
+<Modal bind:show aria-labelledby="modal-title" aria-describedby="modal-description">
 	<div class="px-5 pt-4 dark:text-gray-300 text-gray-700">
 		<div class="flex justify-between items-start">
-			<div class="text-xl font-bold">
+			<h1 id="modal-title" class="text-xl font-bold">
 				{$i18n.t('What’s New in')}
 				{$WEBUI_NAME}
 				<Confetti x={[-1, -0.25]} y={[0, 0.5]} />
-			</div>
+			</h1>
 			<button
 				class="self-center"
 				on:click={() => {
 					localStorage.version = $config.version;
 					show = false;
 				}}
+				aria-label="Close"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -57,20 +55,20 @@
 		</div>
 	</div>
 
-	<div class=" w-full p-4 px-5 text-gray-700 dark:text-gray-100">
-		<div class=" overflow-y-scroll max-h-80 scrollbar-hidden">
+	<div id="modal-description" class="w-full p-4 px-5 text-gray-700 dark:text-gray-100">
+		<div class="overflow-y-scroll max-h-80 scrollbar-hidden">
 			<div class="mb-3">
 				{#if changelog}
 					{#each Object.keys(changelog) as version}
-						<div class=" mb-3 pr-2">
+						<div class="mb-3 pr-2">
 							<div class="font-bold text-xl mb-1 dark:text-white">
 								v{version} - {changelog[version].date}
 							</div>
 
-							<hr class=" dark:border-gray-800 my-2" />
+							<hr class="dark:border-gray-800 my-2" />
 
 							{#each Object.keys(changelog[version]).filter((section) => section !== 'date') as section}
-								<div class="">
+								<div>
 									<div
 										class="font-bold uppercase text-xs {section === 'added'
 											? 'text-white bg-blue-600'
@@ -80,7 +78,7 @@
 											? 'text-white bg-yellow-600'
 											: section === 'removed'
 											? 'text-white bg-red-600'
-											: ''}  w-fit px-3 rounded-full my-2.5"
+											: ''} w-fit px-3 rounded-full my-2.5"
 									>
 										{section}
 									</div>
@@ -108,10 +106,17 @@
 					localStorage.version = $config.version;
 					show = false;
 				}}
-				class=" px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-gray-100 transition rounded-lg"
+				class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-gray-100 transition rounded-lg"
+				aria-label="Close and proceed"
 			>
 				<span class="relative">{$i18n.t("Okay, Let's Go!")}</span>
 			</button>
 		</div>
 	</div>
 </Modal>
+
+<style>
+	.font-mona {
+		font-family: 'Mona Sans', -apple-system, 'Arimo', ui-sans-serif, system-ui, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Noto Sans', sans-serif, 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+	}
+</style>
