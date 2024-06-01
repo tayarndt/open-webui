@@ -73,13 +73,11 @@
 
 	const renderer = new marked.Renderer();
 
-	// For code blocks with simple backticks
 	renderer.codespan = (code) => {
 		return `<code>${code.replaceAll('&amp;', '&')}</code>`;
 	};
 
 	const { extensions, ...defaults } = marked.getDefaults() as marked.MarkedOptions & {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		extensions: any;
 	};
 
@@ -144,8 +142,6 @@
 		if (chatMessageElements) {
 			for (const element of chatMessageElements) {
 				auto_render(element, {
-					// customised options
-					// • auto-render specific keys, e.g.:
 					delimiters: [
 						{ left: '$$', right: '$$', display: false },
 						{ left: '$ ', right: ' $', display: false },
@@ -153,7 +149,6 @@
 						{ left: '\\[', right: '\\]', display: false },
 						{ left: '[ ', right: ' ]', display: false }
 					],
-					// • rendering keys, e.g.:
 					throwOnError: false
 				});
 			}
@@ -336,8 +331,8 @@
 		class="flex w-full message-{message.id}"
 		id="message-{message.id}"
 		dir={$settings.chatDirection}
-		aria-live="polite"
-		aria-atomic="true"
+		role="region"
+		aria-labelledby="message-{message.id}-heading"
 	>
 		<ProfileImage
 			src={modelfiles[message.model]?.imageUrl ??
@@ -376,9 +371,8 @@
 
 			<div
 				class="prose chat-{message.role} w-full max-w-full dark:prose-invert prose-headings:my-0 prose-p:m-0 prose-p:-mb-6 prose-pre:my-0 prose-table:my-0 prose-blockquote:my-0 prose-img:my-0 prose-ul:-my-4 prose-ol:-my-4 prose-li:-my-3 prose-ul:-mb-6 prose-ol:-mb-8 prose-ol:p-0 prose-li:-mb-4 whitespace-pre-line"
-				role="region"
-				aria-label="Message content"
 			>
+				<h3 id="message-{message.id}-heading" class="sr-only">Message from {modelfiles[message.model]?.title ?? 'User'}</h3>
 				<div>
 					{#if edit === true}
 						<div class="w-full bg-gray-50 dark:bg-gray-800 rounded-3xl px-5 py-3 my-2">
@@ -390,18 +384,6 @@
 								on:input={(e) => {
 									e.target.style.height = '';
 									e.target.style.height = `${e.target.scrollHeight}px`;
-								}}
-								on:keydown={(e) => {
-									if (e.key === 'Escape') {
-										document.getElementById('close-edit-message-button')?.click();
-									}
-
-									const isCmdOrCtrlPressed = e.metaKey || e.ctrlKey;
-									const isEnterPressed = e.key === 'Enter';
-
-									if (isCmdOrCtrlPressed && isEnterPressed) {
-										document.getElementById('save-edit-message-button')?.click();
-									}
 								}}
 								aria-label="Edit message"
 							/>
@@ -443,6 +425,7 @@
 										stroke-width="1.5"
 										stroke="currentColor"
 										class="w-5 h-5 self-center"
+										aria-hidden="true"
 									>
 										<path
 											stroke-linecap="round"
@@ -536,12 +519,14 @@
 													stroke="currentColor"
 													stroke-width="2.5"
 													class="size-3.5"
+													aria-hidden="true"
 												>
 													<path
 														stroke-linecap="round"
 														stroke-linejoin="round"
 														d="M15.75 19.5 8.25 12l7.5-7.5"
 													/>
+													<desc>Previous</desc>
 												</svg>
 											</button>
 
@@ -565,12 +550,14 @@
 													stroke="currentColor"
 													stroke-width="2.5"
 													class="size-3.5"
+													aria-hidden="true"
 												>
 													<path
 														stroke-linecap="round"
 														stroke-linejoin="round"
 														d="m8.25 4.5 7.5 7.5-7.5 7.5"
 													/>
+													<desc>Next</desc>
 												</svg>
 											</button>
 										</div>
@@ -595,6 +582,7 @@
 														stroke-width="2.3"
 														stroke="currentColor"
 														class="w-4 h-4"
+														aria-hidden="true"
 													>
 														<path
 															stroke-linecap="round"
@@ -610,7 +598,7 @@
 											<button
 												class="{isLastMessage
 													? 'visible'
-													: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition"
+													: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition copy-response-button"
 												on:click={() => {
 													copyToClipboard(message.content);
 												}}
@@ -623,6 +611,7 @@
 													stroke-width="2.3"
 													stroke="currentColor"
 													class="w-4 h-4"
+													aria-hidden="true"
 												>
 													<path
 														stroke-linecap="round"
@@ -652,7 +641,8 @@
 														fill="currentColor"
 														viewBox="0 0 24 24"
 														xmlns="http://www.w3.org/2000/svg"
-														><style>
+														aria-hidden="true"
+													><style>
 															.spinner_S1WN {
 																animation: spinner_MGfb 0.8s linear infinite;
 																animation-delay: -0.8s;
@@ -679,8 +669,7 @@
 															cx="20"
 															cy="12"
 															r="3"
-														/></svg
-													>
+														/></svg>
 												{:else if speaking}
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
@@ -689,6 +678,7 @@
 														stroke-width="2.3"
 														stroke="currentColor"
 														class="w-4 h-4"
+														aria-hidden="true"
 													>
 														<path
 															stroke-linecap="round"
@@ -704,6 +694,7 @@
 														stroke-width="2.3"
 														stroke="currentColor"
 														class="w-4 h-4"
+														aria-hidden="true"
 													>
 														<path
 															stroke-linecap="round"
@@ -734,7 +725,8 @@
 															fill="currentColor"
 															viewBox="0 0 24 24"
 															xmlns="http://www.w3.org/2000/svg"
-															><style>
+															aria-hidden="true"
+														><style>
 																.spinner_S1WN {
 																	animation: spinner_MGfb 0.8s linear infinite;
 																	animation-delay: -0.8s;
@@ -761,8 +753,7 @@
 																cx="20"
 																cy="12"
 																r="3"
-															/></svg
-														>
+															/></svg>
 													{:else}
 														<svg
 															xmlns="http://www.w3.org/2000/svg"
@@ -771,6 +762,7 @@
 															stroke-width="2.3"
 															stroke="currentColor"
 															class="w-4 h-4"
+															aria-hidden="true"
 														>
 															<path
 																stroke-linecap="round"
@@ -802,6 +794,7 @@
 														stroke-width="2.3"
 														stroke="currentColor"
 														class="w-4 h-4"
+														aria-hidden="true"
 													>
 														<path
 															stroke-linecap="round"
@@ -843,10 +836,10 @@
 														stroke-linejoin="round"
 														class="w-4 h-4"
 														xmlns="http://www.w3.org/2000/svg"
-														><path
+														aria-hidden="true"
+													><path
 															d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
-														/></svg
-													>
+														/></svg>
 												</button>
 											</Tooltip>
 
@@ -878,10 +871,10 @@
 														stroke-linejoin="round"
 														class="w-4 h-4"
 														xmlns="http://www.w3.org/2000/svg"
-														><path
+														aria-hidden="true"
+													><path
 															d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"
-														/></svg
-													>
+														/></svg>
 												</button>
 											</Tooltip>
 										{/if}
@@ -905,6 +898,7 @@
 														stroke-width="2.3"
 														stroke="currentColor"
 														class="w-4 h-4"
+														aria-hidden="true"
 													>
 														<path
 															stroke-linecap="round"
@@ -938,6 +932,7 @@
 														stroke-width="2.3"
 														stroke="currentColor"
 														class="w-4 h-4"
+														aria-hidden="true"
 													>
 														<path
 															stroke-linecap="round"
